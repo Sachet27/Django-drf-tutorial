@@ -1,0 +1,21 @@
+[project]
+name = "django-drf"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Sachet27", email = "thesachet123@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "django>=6.1.2",
+    "djangorestframework>=3.18.3",
+    "requests>=2.34.2",
+]
+
+[project.scripts]
+django-drf = "django_drf:main"
+
+[build-system]
+requires = ["uv_build>=0.12.22,<0.13.0"]
+build-backend = "uv_build"
