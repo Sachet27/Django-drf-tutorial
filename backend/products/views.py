@@ -111,3 +111,40 @@ class ProductAddListView(generics.GenericAPIView, mixins.CreateModelMixin):
         return Response(data= serializer.data, status= status.HTTP_201_CREATED)
 
 
+# all crud operations combined into one
+class ProductNormalCrudView(generics.GenericAPIView,
+                            mixins.ListModelMixin,
+                            mixins.RetrieveModelMixin,
+                            mixins.CreateModelMixin,
+                            mixins.UpdateModelMixin,
+                            mixins.DestroyModelMixin
+                            ):
+    
+    queryset= Product.objects.all()
+    serializer_class= ProductSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'product_id'
+
+    # list and detail views
+    def get(self, request, *args, **kwargs):
+        id = kwargs.get('product_id')
+
+        if id is not None:
+            return self.retrieve(request, *args, **kwargs)
+        
+        return self.list(request, *args, **kwargs)
+
+    # create view
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    # update view
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    # delete view
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
