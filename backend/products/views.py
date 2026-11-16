@@ -4,8 +4,7 @@ from rest_framework import status
 from .serializers import ProductSerializer
 from .models import Product
 from rest_framework.response import Response
-from rest_framework import generics
-
+from rest_framework import generics, mixins
 
 # @api_view(['GET'])
 # def product_list(request):
@@ -61,10 +60,54 @@ class ProductRetrieveAPIView(generics.RetrieveAPIView):
 class ProductCreateAPIView(generics.CreateAPIView):
     # queryset = Product.objects.all()
     serializer_class= ProductSerializer
+
+    #optional. Used to customize Creation
+    def perform_create(self, serializer):
+        content= serializer.validated_data.get('content')
+        
+        if not content:
+            content= serializer.validated_data.get('title')
+        
+        serializer.save(content= content)
+
     
 
+class ProductUpdateAPIView(generics.UpdateAPIView):
+    queryset= Product.objects.all()
+    serializer_class= ProductSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'product_id'
+
+
+    # optional. Used to customize updation
+    def perform_update(self, serializer):
+        instance= serializer.save()
+        
+        if not instance.content:
+            instance.content = instance.title
+            instance.save(update_fields = ['content'])
 
 
 
+class ProductDestroyAPIView(generics.DestroyAPIView): 
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg= 'product_id'
+
+
+
+class ProductAddListView(generics.GenericAPIView, mixins.CreateModelMixin):
+
+    serializer_class = ProductSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer= self.get_serializer(data = request.data, many=True)
+        
+        serializer.is_valid(raise_exception= True)
+
+        self.perform_create(serializer)
+
+        return Response(data= serializer.data, status= status.HTTP_201_CREATED)
 
 
