@@ -4,7 +4,8 @@ from rest_framework import status
 from .serializers import ProductSerializer
 from .models import Product
 from rest_framework.response import Response
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, permissions, authentication
+from authentication.authentication import MyTokenAuthentication
 
 # @api_view(['GET'])
 # def product_list(request):
@@ -57,10 +58,18 @@ class ProductRetrieveAPIView(generics.RetrieveAPIView):
 #         status= status.HTTP_400_BAD_REQUEST
 #     )
 
+
 class ProductCreateAPIView(generics.CreateAPIView):
     # queryset = Product.objects.all()
     serializer_class= ProductSerializer
 
+    # authentication_classes= [
+    #     authentication.SessionAuthentication, 
+    #     # authentication.TokenAuthentication,
+    #     MyTokenAuthentication, #custom authentication token
+    # ]
+    # permission_classes = [permissions.IsAuthenticated]
+ 
     #optional. Used to customize Creation
     def perform_create(self, serializer):
         content= serializer.validated_data.get('content')

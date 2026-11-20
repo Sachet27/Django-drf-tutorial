@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'products'
+    'rest_framework.authtoken',
+    'authentication',
+    'products',
 ]
 
 MIDDLEWARE = [
@@ -126,4 +128,22 @@ MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
+}
+
+auth_classes= [
+        'rest_framework.authentication.SessionAuthentication',
+        'authentication.authentication.MyTokenAuthentication'
+]
+
+if DEBUG:
+    auth_classes= [
+            'authentication.authentication.MyTokenAuthentication'
+    ]   
+
+REST_FRAMEWORK= {
+    "DEFAULT_AUTHENTICATION_CLASSES": auth_classes,
+
+    "DEFAULT_PERMISSION_CLASSES": [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+    ],
 }
